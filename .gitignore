@@ -2,3 +2,9 @@ text
 
 process_introduction.md
 .venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+mlruns/
+data/
+.env
