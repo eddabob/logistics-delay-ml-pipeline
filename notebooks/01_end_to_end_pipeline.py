@@ -10,10 +10,12 @@ from train_model import train_and_log
 spark = SparkSession.builder.getOrCreate()
 
 # 1. Generate local temp CSV & load into Spark
-csv_path = "/tmp/bronze_shipments.csv"
-generate_logistics_data(num_rows=5000, output_path=csv_path)
+# 1. Save CSV inside your Workspace user folder so Spark Connect can access it
+current_user = spark.sql("SELECT current_user()").collect()
+bronze_csv_path = f"/Workspace/Users/{current_user}/bronze_shipments.csv"
+generate_logistics_data(num_rows=5000, output_path=bronze_csv_path)
 
-bronze_df = spark.read.csv(f"file:{csv_path}", header=True, inferSchema=True)
+bronze_df = spark.read.csv(f"file:{bronze_csv_path}", header=True, inferSchema=True)
 
 # 2. Silver & Gold transformations
 silver_df = clean_bronze_to_silver(bronze_df)
