@@ -1,6 +1,7 @@
-# Databricks notebook source
 import sys
 sys.path.append("../src")
+import os
+import pandas as pd
 
 from pyspark.sql import SparkSession
 from generate_data import generate_logistics_data
@@ -9,13 +10,11 @@ from train_model import train_and_log
 
 spark = SparkSession.builder.getOrCreate()
 
-# 1. Generate local temp CSV & load into Spark
-# 1. Save CSV inside your Workspace user folder so Spark Connect can access it
-current_user = spark.sql("SELECT current_user()").collect()[0]
-bronze_csv_path = f"/Workspace/Users/{current_user}/bronze_shipments.csv"
+# 1. Generate CSV in driver /tmp and load into Spark via Pandas
+bronze_csv_path = "/tmp/bronze_shipments.csv"
 generate_logistics_data(num_rows=5000, output_path=bronze_csv_path)
 
-bronze_df = spark.read.csv(f"file:{bronze_csv_path}", header=True, inferSchema=True)
+bronze_df = spark.createDataFrame(pd.read_csv(bronze_csv_path))
 
 # 2. Silver & Gold transformations
 silver_df = clean_bronze_to_silver(bronze_df)
