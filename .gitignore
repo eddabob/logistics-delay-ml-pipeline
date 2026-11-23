@@ -8,3 +8,7 @@ __pycache__/
 mlruns/
 data/
 .env
+/notebooks/mlruns/
+/notebooks/test.ipynb
+/notebooks/mlflow.db
+/notebooks/.ipynb_checkpoints/
